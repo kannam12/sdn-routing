@@ -1,0 +1,215 @@
+10.0.0.2 generate traffic to 10.0.0.1 with 16 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.7, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 700.95 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 43645 connected with 10.0.0.7 port 5001
+10.0.0.2 generate traffic to 10.0.0.1 with 13 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 862.71 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 38151 connected with 10.0.0.11 port 5001
+10.0.0.2 generate traffic to 10.0.0.1 with 21 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 534.06 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 54850 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  39.4 MBytes  22.0 Mbits/sec
+[  3] Sent 28087 datagrams
+No traffic for 5 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 17 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.7, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 659.72 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 44656 connected with 10.0.0.7 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  31.9 MBytes  17.8 Mbits/sec
+[  3] Sent 22737 datagrams
+No traffic for 4 seconds
+10.0.0.2 generate traffic to 10.0.0.7 with 15 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.7, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 747.68 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 33399 connected with 10.0.0.7 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  28.1 MBytes  15.7 Mbits/sec
+[  3] Sent 20063 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.7 with 49 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.3, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 228.88 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 35474 connected with 10.0.0.3 port 5001
+10.0.0.2 generate traffic to 10.0.0.1 with 60 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.5, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 186.92 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 55510 connected with 10.0.0.5 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec   112 MBytes  62.9 Mbits/sec
+[  3] Sent 80247 datagrams
+No traffic for 4 seconds
+10.0.0.2 generate traffic to 10.0.0.5 with 34 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 329.86 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 39790 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  63.8 MBytes  35.6 Mbits/sec
+[  3] Sent 45474 datagrams
+No traffic for 4 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 20 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 560.76 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 33615 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  37.5 MBytes  21.0 Mbits/sec
+[  3] Sent 26750 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 10 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.7, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 1121.52 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 57693 connected with 10.0.0.7 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  18.8 MBytes  10.5 Mbits/sec
+[  3] Sent 13375 datagrams
+No traffic for 3 seconds
+10.0.0.2 generate traffic to 10.0.0.7 with 49 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.4, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 228.88 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 55944 connected with 10.0.0.4 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  91.9 MBytes  51.4 Mbits/sec
+[  3] Sent 65535 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.4 with 16 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 700.95 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 33467 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  30.0 MBytes  16.8 Mbits/sec
+[  3] Sent 21400 datagrams
+No traffic for 2 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 38 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.9, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 295.14 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 54199 connected with 10.0.0.9 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  71.3 MBytes  39.8 Mbits/sec
+[  3] Sent 50825 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.9 with 10 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.10, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 1121.52 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 54995 connected with 10.0.0.10 port 5001
+10.0.0.2 generate traffic to 10.0.0.1 with 50 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 224.30 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 45774 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  93.7 MBytes  52.4 Mbits/sec
+[  3] Sent 66872 datagrams
+No traffic for 4 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 48 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.10, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 233.65 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 52720 connected with 10.0.0.10 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  90.0 MBytes  50.3 Mbits/sec
+[  3] Sent 64200 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.10 with 44 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.9, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 254.89 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 58833 connected with 10.0.0.9 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  82.5 MBytes  46.1 Mbits/sec
+[  3] Sent 58848 datagrams
+No traffic for 4 seconds
+10.0.0.2 generate traffic to 10.0.0.9 with 41 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.11, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 273.54 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 54279 connected with 10.0.0.11 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  76.9 MBytes  43.0 Mbits/sec
+[  3] Sent 54835 datagrams
+No traffic for 5 seconds
+10.0.0.2 generate traffic to 10.0.0.11 with 32 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.4, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 350.48 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 56815 connected with 10.0.0.4 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  60.0 MBytes  33.6 Mbits/sec
+[  3] Sent 42799 datagrams
+No traffic for 1 seconds
+10.0.0.2 generate traffic to 10.0.0.4 with 10 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.12, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 1121.52 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 53271 connected with 10.0.0.12 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  18.8 MBytes  10.5 Mbits/sec
+[  3] Sent 13375 datagrams
+No traffic for 2 seconds
+10.0.0.2 generate traffic to 10.0.0.12 with 51 Mbits/s
+------------------------------------------------------------
+Client connecting to 10.0.0.4, UDP port 5001
+Sending 1470 byte datagrams, IPG target: 219.91 us (kalman adjust)
+UDP buffer size:  208 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.2 port 35776 connected with 10.0.0.4 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-15.0 sec  95.6 MBytes  53.5 Mbits/sec
+[  3] Sent 68213 datagrams
+No traffic for 2 seconds
