@@ -93,8 +93,8 @@ def run():
 
 
     #net = Mininet(topo=topo)
-    net = Mininet(topo = topo)
-    net.addController('c0', controller=RemoteController, ip="127.0.0.1", port=5555)
+    myController = RemoteController( 'c0', ip='127.0.0.1', port=5555 )
+    net = Mininet(topo, controller=myController)
 
     net.start()
 
