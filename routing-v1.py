@@ -7,6 +7,7 @@ from ryu.controller.handler import set_ev_cls
 from ryu.lib import hub
 from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link
+from ryu.lib.packet import packet, ipv4
 
 import networkx as nx
 import time
@@ -25,6 +26,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         self.net = nx.DiGraph()
         self.interfaces = {}
         self.topology_api_app = self
+        self.routing = {}
 
 
     # source: https://sdn-lab.com/2014/12/25/shortest-path-forwarding-with-openflow-on-ryu/ 
@@ -47,9 +49,6 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         for v,w,data in self.net.edges(data=True):
             self.interfaces[v,data['port']] = w
 
-        print(self.interfaces)
-
-
     @set_ev_cls(ofp_event.EventOFPStateChange,
                 [MAIN_DISPATCHER, DEAD_DISPATCHER])
     def _state_change_handler(self, ev):
@@ -71,6 +70,9 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 self._request_stats(dp)
             for link in self.net.edges(data=True):
                 print(link)
+                
+            dijkstra_paths = self.dijkstra()
+            print("routing:", dijkstra_paths)
 
     def _request_stats(self, datapath):
         self.logger.debug('send stats request: %016x', datapath.id)
@@ -119,15 +121,12 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 source = ev.msg.datapath.id
                 destination = self.interfaces[ev.msg.datapath.id, stat.port_no]
                 current_thr = (self.net[source][destination]['bytesTx'] - current)/CustomSwitch.POLLING_INTERVAL
-
                 percent = current_thr/CustomSwitch.MAX_THR*100
                 nowa_waga = percent*percent
                         
                 self.net[source][destination]['waga'] = nowa_waga
                 self.net[source][destination]['bytesTx'] = current
-
-            
-
+                
         self.logger.info('datapath         port     '
                          'rx-pkts  rx-bytes rx-error '
                          'tx-pkts  tx-bytes tx-error')
@@ -140,3 +139,21 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                              stat.rx_packets, stat.rx_bytes, stat.rx_errors,
                              stat.tx_packets, stat.tx_bytes, stat.tx_errors)    
 
+    def dijkstra(self):
+        routing = {}
+        try:
+            for source in self.net.edges(data=True):
+                for destination in self.net.edges(data=True):
+                    if (destination != source):
+                        path  =nx.dijkstra_path(self.net, source[0], destination[0], weight='waga')
+                        #print(path)
+                        if(len(path)>1):
+                            if(source[0] == path[0] and source[1] == path[1]):
+                                #print(source)
+                                interface = source[2]['port']
+                                routing[(source[0], destination[0])] = interface
+        except nx.NetworkXNoPath:
+            print('No path')
+        return routing
+
+    
