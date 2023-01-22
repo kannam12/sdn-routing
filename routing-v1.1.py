@@ -45,11 +45,14 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
             # for link in self.net.edges(data=True):
             #     print(link)
                 
-            dijkstra_paths = self.dijkstra()
-            print(f'New routing: {dijkstra_paths}')
+            self.routing = self.dijkstra()
+            print(f'New routing: {self.routing}')
 
-            for dp in self.datapaths.values():
-                self.update_flowtable(dp)
+            #print(f'Self.datapaths: {self.datapaths}')
+
+            for dp_key in self.datapaths:
+                dp_value = self.datapaths[dp_key]
+                self.update_flowtable(dp_key, dp_value)
 
 
     # source: https://sdn-lab.com/2014/12/25/shortest-path-forwarding-with-openflow-on-ryu/ 
@@ -147,9 +150,9 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 self.net[source][destination]['waga'] = nowa_waga
                 self.net[source][destination]['bytesTx'] = current
 
-                print(f'Obliczono nowa wage dla lacza {source} - {destination}')
+                #print(f'Obliczono nowa wage dla lacza {source} - {destination}')
         
-        print(f'Wypisywanie statystyk dla PORT (...)')
+        #print(f'Wypisywanie statystyk dla PORT (...)')
                 
         # self.logger.info('datapath         port     '
         #                  'rx-pkts  rx-bytes rx-error '
@@ -185,16 +188,23 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
     # source: ryu/app/simple_switch_13.py
 
-    def update_flowtable(self, datapath):
+    def update_flowtable(self, dp_key, dp_value):
 
-        ofproto = datapath.ofproto
-        parser = datapath.ofproto_parser
+        # struktura przechowujaca ip_hosta - jego gateway ??
+        
+        #print(f'Datapath: {datapath}')
+
+        #ofproto = dp_value.ofproto
+        parser = dp_value.ofproto_parser        
 
         #i tu todosek - wyciagnac ze strunktury routing dla danego datapath [(dp, ip_dst)] : out_port
         for route_key in self.routing.keys():
-            if route_key[0] == datapath:
+            if route_key[0] == dp_key:
+
                 ip_dst = route_key[1]
                 out_port = self.routing[route_key]
+
+                ip_dst = '10.0.0.' + str(route_key[1])
 
                 #jesli zmaczuje sie nam ip destynacji
                 match = parser.OFPMatch(ipv4_dst=ip_dst)
@@ -203,9 +213,9 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 actions = [parser.OFPActionOutput(port=out_port)]
                 
                 #wyslij requesta o dodanie takiego flow
-                self.add_flow(datapath, 1, match, actions)
+                self.add_flow(dp_value, 1, match, actions)
 
-                print(f'Udalo sie dodac flowy dla switcha {datapath}')
+                print(f'Added flow: switch {dp_key}, route key: {route_key}, ip_dst: {ip_dst}')
 
                 # w sumie co to robi nie pamietam, tyle co:
                 # verify if we have a valid buffer_id, if yes avoid to send both flow_mod & packet_out
@@ -226,11 +236,13 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         if buffer_id:
             mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
                                     priority=priority, match=match,
-                                    instructions=inst)
+                                    instructions=inst, hard_timeout=21)
         else:
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-                                    match=match, instructions=inst)
+                                    match=match, instructions=inst, hard_timeout=21)
         datapath.send_msg(mod)
+        print(f'Msg to add new flow: {mod}')
+
 
 
     
