@@ -207,7 +207,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 ip_dst = '10.0.0.' + str(route_key[1])
 
                 #jesli zmaczuje sie nam ip destynacji
-                match = parser.OFPMatch(ipv4_dst=ip_dst)
+                match = parser.OFPMatch(ipv4_dst=ip_dst, eth_type=0x800)
 
                 #to wyslij przez port X
                 actions = [parser.OFPActionOutput(port=out_port)]
