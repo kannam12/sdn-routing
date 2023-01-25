@@ -2,6 +2,7 @@ from operator import attrgetter
 
 from ryu.app import simple_switch_13
 from ryu.controller import ofp_event
+from ryu.ofproto import ofproto_v1_3
 from ryu.controller.handler import MAIN_DISPATCHER, DEAD_DISPATCHER, CONFIG_DISPATCHER
 from ryu.controller.handler import set_ev_cls
 from ryu.lib import hub
@@ -15,8 +16,9 @@ import pprint
 
 
 class CustomSwitch(simple_switch_13.SimpleSwitch13):
+    OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
 
-    POLLING_INTERVAL = 10
+    POLLING_INTERVAL = 20
     MAX_THR = 1e9/8
 
 
@@ -28,6 +30,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         self.interfaces = {}
         self.topology_api_app = self
         self.routing = {}
+        self.mac_to_port = {}
 
     # nasz "MAIN"
     def _monitor(self):
@@ -41,12 +44,9 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
             for dp in self.datapaths.values():
                 self._request_stats(dp)
-
-            # for link in self.net.edges(data=True):
-            #     print(link)
                 
             self.routing = self.dijkstra()
-            print(f'New routing: {self.routing}')
+            #print(f'New routing: {self.routing}')
 
             #print(f'Self.datapaths: {self.datapaths}')
 
@@ -66,12 +66,11 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         self.net.add_nodes_from(switches)
         self.net.add_edges_from(links)
 
-        for link in self.net.edges(data=True):
-            print(link)
-        for switch in switch_list:
-          print(switch)
+        # for link in self.net.edges(data=True):
+        #     print(link)
+        # for switch in switch_list:
+        #   print(switch)
 
-        # interfaces[source, port] = destination
         for v,w,data in self.net.edges(data=True):
             self.interfaces[v,data['port']] = w
 
@@ -129,29 +128,11 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
         print(f'Wypisywanie statystyk dla FLOW (...)')
 
-        # self.logger.info('datapath         '
-        #                  'in-port  eth-dst           '
-        #                  'out-port packets  bytes')
-        # self.logger.info('---------------- '
-        #                  '-------- ----------------- '
-        #                  '-------- -------- --------')
-        # for stat in sorted([flow for flow in body if flow.priority == 1],
-        #                    key=lambda flow: (flow.match['in_port'],
-        #                                      flow.match['eth_dst'])):
-        #     self.logger.info('%016x %8x %17s %8x %8d %8d',
-        #                      ev.msg.datapath.id,
-        #                      stat.match['in_port'], stat.match['eth_dst'],
-        #                      stat.instructions[0].actions[0].port,
-        #                      stat.packet_count, stat.byte_count)
-
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
 
         body = ev.msg.body
-        # print(body)
-        # print(ev.msg.datapath.id) # switch id
 
-        # for edge in self.net.edges(data=True):
 
         for stat in sorted(body, key=attrgetter('port_no')):
 
@@ -166,21 +147,6 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 self.net[source][destination]['waga'] = nowa_waga
                 self.net[source][destination]['bytesTx'] = current
 
-                #print(f'Obliczono nowa wage dla lacza {source} - {destination}')
-        
-        #print(f'Wypisywanie statystyk dla PORT (...)')
-                
-        # self.logger.info('datapath         port     '
-        #                  'rx-pkts  rx-bytes rx-error '
-        #                  'tx-pkts  tx-bytes tx-error')
-        # self.logger.info('---------------- -------- '
-        #                  '-------- -------- -------- '
-        #                  '-------- -------- --------')
-        # for stat in sorted(body, key=attrgetter('port_no')):
-        #     self.logger.info('      %8d   %8x %8d %8d %8d %8d %8d %8d',
-        #                      ev.msg.datapath.id, stat.port_no,
-        #                      stat.rx_packets, stat.rx_bytes, stat.rx_errors,
-        #                      stat.tx_packets, stat.tx_bytes, stat.tx_errors)    
 
     def dijkstra(self):
 
@@ -252,7 +218,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         #print(f'Msg to add new flow: {mod}')
 
 
-    # Obsuga arpa
+    # # Obsuga arpa - w desperacji wrzucony caly simple switch 13 i nie dziala
 
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
@@ -260,18 +226,72 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
-        # Create the match criteria for ARP packets
-        match = parser.OFPMatch(eth_type=0x0806)
+        # install table-miss flow entry
+        #
+        # We specify NO BUFFER to max_len of the output action due to
+        # OVS bug. At this moment, if we specify a lesser number, e.g.,
+        # 128, OVS will send Packet-In with invalid buffer_id and
+        # truncated packet data. In that case, we cannot output packets
+        # correctly.  The bug has been fixed in OVS v2.1.0.
+        match = parser.OFPMatch()
+        actions = [parser.OFPActionOutput(ofproto.OFPP_CONTROLLER,
+                                          ofproto.OFPCML_NO_BUFFER)]
+        self.add_flow(datapath, 0, match, actions)
 
-        # Set the action for the flow
-        actions = [parser.OFPActionOutput(ofproto.OFPP_FLOOD)]
+    @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
+    def _packet_in_handler(self, ev):
+        # If you hit this you might want to increase
+        # the "miss_send_length" of your switch
+        if ev.msg.msg_len < ev.msg.total_len:
+            self.logger.debug("packet truncated: only %s of %s bytes",
+                              ev.msg.msg_len, ev.msg.total_len)
+        msg = ev.msg
+        datapath = msg.datapath
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+        in_port = msg.match['in_port']
 
-        # Create the flow mod message and send it to the switch
-        mod = parser.OFPFlowMod(datapath=datapath, match=match, cookie=0,
-                                command=ofproto.OFPFC_ADD, idle_timeout=0,
-                                hard_timeout=0, priority=0x8000,
-                                flags=ofproto.OFPFF_SEND_FLOW_REM, actions=actions)
-        datapath.send_msg(mod)
+        pkt = packet.Packet(msg.data)
+        eth = pkt.get_protocols(ethernet.ethernet)[0]
+
+        if eth.ethertype == ether_types.ETH_TYPE_LLDP:
+            # ignore lldp packet
+            return
+        dst = eth.dst
+        src = eth.src
+
+        dpid = format(datapath.id, "d").zfill(16)
+        self.mac_to_port.setdefault(dpid, {})
+
+        #self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
+
+        # learn a mac address to avoid FLOOD next time.
+        self.mac_to_port[dpid][src] = in_port
+
+        if dst in self.mac_to_port[dpid]:
+            out_port = self.mac_to_port[dpid][dst]
+        else:
+            out_port = ofproto.OFPP_FLOOD
+
+        actions = [parser.OFPActionOutput(out_port)]
+
+        # install a flow to avoid packet_in next time
+        if out_port != ofproto.OFPP_FLOOD:
+            match = parser.OFPMatch(in_port=in_port, eth_dst=dst, eth_src=src)
+            # verify if we have a valid buffer_id, if yes avoid to send both
+            # flow_mod & packet_out
+            if msg.buffer_id != ofproto.OFP_NO_BUFFER:
+                self.add_flow(datapath, 1, match, actions, msg.buffer_id)
+                return
+            else:
+                self.add_flow(datapath, 1, match, actions)
+        data = None
+        if msg.buffer_id == ofproto.OFP_NO_BUFFER:
+            data = msg.data
+
+        out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
+                                  in_port=in_port, actions=actions, data=data)
+        datapath.send_msg(out)
 
 
 
