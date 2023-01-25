@@ -2,7 +2,7 @@ from operator import attrgetter
 
 from ryu.app import simple_switch_13
 from ryu.controller import ofp_event
-from ryu.controller.handler import MAIN_DISPATCHER, DEAD_DISPATCHER
+from ryu.controller.handler import MAIN_DISPATCHER, DEAD_DISPATCHER, CONFIG_DISPATCHER
 from ryu.controller.handler import set_ev_cls
 from ryu.lib import hub
 from ryu.topology import event, switches
@@ -16,7 +16,7 @@ import pprint
 
 class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
-    POLLING_INTERVAL = 5
+    POLLING_INTERVAL = 10
     MAX_THR = 1e9/8
 
 
@@ -78,6 +78,22 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         print(f'Udalo sie wykryc i zapisac topologie:')
         print(self.net.nodes(data=True))
         print(self.net.edges(data=True))
+
+    # Dodanie flow kierujcego s1 -> h1
+    @set_ev_cls(event.EventSwitchEnter)
+    def add_host_switch_flows(self, ev):
+
+        for dp in self.datapaths.values():
+
+            parser = dp.ofproto_parser   
+
+            ip_dst = '10.0.0.' + str(dp.id)
+
+            match = parser.OFPMatch(ipv4_dst=ip_dst, eth_type=0x800)
+            actions = [parser.OFPActionOutput(port=1)]
+            self.add_flow(dp, 5, match, actions, hard_timeout=0)
+
+            print(f'Dodoano flow: DATAPATH ID: {dp.id}, IP DST {ip_dst}')
 
 
     @set_ev_cls(ofp_event.EventOFPStateChange,
@@ -197,7 +213,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         #ofproto = dp_value.ofproto
         parser = dp_value.ofproto_parser        
 
-        #i tu todosek - wyciagnac ze strunktury routing dla danego datapath [(dp, ip_dst)] : out_port
+        # wyciagamy ze strunktury routing dla danego datapath [(dp, ip_dst)] : out_port
         for route_key in self.routing.keys():
             if route_key[0] == dp_key:
 
@@ -213,20 +229,12 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 actions = [parser.OFPActionOutput(port=out_port)]
                 
                 #wyslij requesta o dodanie takiego flow
-                self.add_flow(dp_value, 1, match, actions)
+                self.add_flow(dp_value, 10, match, actions)
 
-                print(f'Added flow: switch {dp_key}, route key: {route_key}, ip_dst: {ip_dst}')
+                #print(f'Added flow: switch {dp_key}, route key: {route_key}, ip_dst: {ip_dst}')
 
-                # w sumie co to robi nie pamietam, tyle co:
-                # verify if we have a valid buffer_id, if yes avoid to send both flow_mod & packet_out
 
-                # takze wykomentowane, ale to chyba wazne???
-
-                # out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-                #                         in_port=in_port, actions=actions, data=data)
-                # datapath.send_msg(out)
-
-    def add_flow(self, datapath, priority, match, actions, buffer_id=None):
+    def add_flow(self, datapath, priority, match, actions, buffer_id=None, hard_timeout=21):
 
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -236,12 +244,34 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         if buffer_id:
             mod = parser.OFPFlowMod(datapath=datapath, buffer_id=buffer_id,
                                     priority=priority, match=match,
-                                    instructions=inst, hard_timeout=21)
+                                    instructions=inst, hard_timeout=hard_timeout)
         else:
             mod = parser.OFPFlowMod(datapath=datapath, priority=priority,
-                                    match=match, instructions=inst, hard_timeout=21)
+                                    match=match, instructions=inst, hard_timeout=hard_timeout)
         datapath.send_msg(mod)
-        print(f'Msg to add new flow: {mod}')
+        #print(f'Msg to add new flow: {mod}')
+
+
+    # Obsuga arpa
+
+    @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
+    def switch_features_handler(self, ev):
+        datapath = ev.msg.datapath
+        ofproto = datapath.ofproto
+        parser = datapath.ofproto_parser
+
+        # Create the match criteria for ARP packets
+        match = parser.OFPMatch(eth_type=0x0806)
+
+        # Set the action for the flow
+        actions = [parser.OFPActionOutput(ofproto.OFPP_FLOOD)]
+
+        # Create the flow mod message and send it to the switch
+        mod = parser.OFPFlowMod(datapath=datapath, match=match, cookie=0,
+                                command=ofproto.OFPFC_ADD, idle_timeout=0,
+                                hard_timeout=0, priority=0x8000,
+                                flags=ofproto.OFPFF_SEND_FLOW_REM, actions=actions)
+        datapath.send_msg(mod)
 
 
 
