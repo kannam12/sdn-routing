@@ -15,6 +15,9 @@ Powyższy skrypt:
 
 * `--observe-links` jest potrzebne do automatycznego wykrywania topologii
 * można pominąć opcję `--verbose`
+* uruchamianie razem z GUI:
+
+`ryu-manager --ofp-tcp-listen-port 5555  --observe-links ryu/ryu/app/gui_topology/gui_topology.py sdn-routing/routing.py`
 
 
 ## Opis działania skryptu *routing.py*
