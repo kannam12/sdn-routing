@@ -97,8 +97,23 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
             ip_dst = '10.0.0.' + str(dp.id)
 
+
+            ## JEST TAKI FRAGMENT W SIMPLE SWITCH 13, opisany https://osrg.github.io/ryu-book/en/html/switching_hub.html
+            
+            # # learn a mac address to avoid FLOOD next time.
+            # self.mac_to_port[dp.id][src] = in_port
+
+            # # if the destination mac address is already learned,
+            # # decide which port to output the packet, otherwise FLOOD
+            # if dst in self.mac_to_port[dpid]:
+            #     out_port = ...
+            # else:
+
+
+            flood_or_port = ofproto.OFPP_FLOOD # <- o z tym pewnie trzeba cos zrobic
+
             match = parser.OFPMatch(eth_type=0x0806)
-            actions = [parser.OFPActionOutput(ofproto.OFPP_FLOOD)]
+            actions = [parser.OFPActionOutput(flood_or_port)]
             self.add_flow(dp, 2, match, actions, hard_timeout=0)
 
             match = parser.OFPMatch(ipv4_dst=ip_dst, eth_type=0x0806)
