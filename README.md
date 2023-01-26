@@ -5,8 +5,13 @@
 `sudo python3 setup-topo-generate-traffic.py --topo=fixed` 
 
 Powyższy skrypt:
-1. **Zestawia sieć**. W przypadku chęci skorzystania z dowolnej innej topologii zapisanej w formacie .gml należy użyć `--topo=from-gml` oraz zapisać plik .gml w tym samym folderze pod nazwą *custom-topo.gml*. W przypadku chęci skorzystania z topologii proponowanej przez mininet, np. tree należy do standardowej komendy dodać `--controller=remote,ip=127.0.0.1,port=5555`
-1. Na każdym z hostów **uruchamia serwer Iperf oraz inicjuje testowe przepływy**. Wyniki dla poszczególnych hostów zapisywane są w *results/results_<host_IP>.txt*
+1. **Zestawia sieć**.
+> W przypadku chęci skorzystania z dowolnej innej topologii zapisanej w formacie .gml należy użyć `--topo=from-gml` oraz zapisać plik .gml w tym samym folderze pod nazwą *custom-topo.gml*.
+
+> Istnieje również testowa wariacja `--topo=fixed-no-loops`.
+
+> W przypadku chęci skorzystania z topologii proponowanej przez mininet, np. tree należy do standardowej komendy dodać `--controller=remote,ip=127.0.0.1,port=5555`
+2. Na każdym z hostów **uruchamia serwer Iperf oraz inicjuje testowe przepływy**. Wyniki dla poszczególnych hostów zapisywane są w *results/results_<host_IP>.txt*
 
 
 ### Uruchamianie sterownika i zaimplementowanej funckjonalności:
