@@ -7,8 +7,7 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 import argparse
 from random import sample
-# from mininet.node import Controller
-from mininet.node import OVSController
+
 from mininet.node import RemoteController
 
 
@@ -17,23 +16,24 @@ class MyTopoFromGML( Topo ):
     def build( self ):
         "Load topo form .gml file."
 
-        GRAPH = nx.read_gml('topo-polska.gml')  #works also for other .gml files, eg. janos
+        GRAPH = nx.read_gml('topos/topo-polska.gml')  #works also for other .gml files, eg. janos
 
         node_names = list(GRAPH.nodes)  #helper for list()
         numbers = [i+1 for i in range (len(node_names))]  #helper for dictionary creating
 
         NODES = dict(zip(node_names, numbers))
 
+        node_names.sort()
+
         for i in range (len(GRAPH.nodes)):
-            self.addSwitch(f's_{i+1}')    #has to be number, not city name
-            self.addHost(f'h_{ node_names[i] }')        
-            self.addLink(f'h_{ node_names[i] }', f's_{i+1}')
+            self.addSwitch(f's{i+1}')    #has to be number, not city name
+            self.addHost(f'{ node_names[i] }')        
+            self.addLink(f'{ node_names[i] }', f's{i+1}')
 
         for(n1, n2) in GRAPH.edges:
-            self.addLink(f's_{ NODES[n1] }', f's_{ NODES[n2] }')
+            self.addLink(f's{ NODES[n1] }', f's{ NODES[n2] }')
 
-
-class PolskaTopoFixed( Topo ):  
+class PolskaTopoNoLoops( Topo ):  
 
     def build( self ):
         "Create custom topo."
@@ -51,6 +51,7 @@ class PolskaTopoFixed( Topo ):
                     'Warszawa',
                     'Lodz'] 
 
+        cities.sort()
         node_count = len(cities)
 
         sw = [ f's{i+1}' for i in range (node_count)]     #s1, s2....
@@ -76,15 +77,61 @@ class PolskaTopoFixed( Topo ):
         # self.addLink( Switches[7], Switches[11] )
         # self.addLink( Switches[10], Switches[11] )
 
-topos = {   'from-gml': ( lambda: MyTopoFromGML() ),
-            'fixed':    ( lambda: PolskaTopoFixed() ) } 
+
+class PolskaTopoFixed( Topo ):  
+
+    def build( self ):
+        "Create custom topo."
+
+        cities = [  'Szczecin',
+                    'Kolobrzeg',
+                    'Gdansk',
+                    'Bialystok',
+                    'Rzeszow',
+                    'Krakow',
+                    'Katowice',
+                    'Wroclaw',
+                    'Poznan',
+                    'Bydgoszcz',
+                    'Warszawa',
+                    'Lodz'] 
+
+        cities.sort()
+        node_count = len(cities)
+
+        sw = [ f's{i+1}' for i in range (node_count)]     #s1, s2....
+
+        Hosts = [ self.addHost(str(city)) for city in cities ]       
+        Switches = [ self.addSwitch(str(s)) for s in sw ] 
+
+        # Add links
+        for i in range (node_count):
+            self.addLink( Hosts[i] , Switches[i] )
+
+        for i in range (node_count-1):
+            self.addLink( Switches[i], Switches[i+1] )
+            
+        self.addLink( Switches[0], Switches[8] )
+        self.addLink( Switches[1], Switches[9] )
+        self.addLink( Switches[2], Switches[10] )
+        self.addLink( Switches[3], Switches[10] )
+        self.addLink( Switches[5], Switches[10] )
+        self.addLink( Switches[6], Switches[11] )
+        self.addLink( Switches[7], Switches[11] )
+        self.addLink( Switches[10], Switches[11] )
+
+topos = {   'from-gml':         ( lambda: MyTopoFromGML() ),
+            'fixed':            ( lambda: PolskaTopoFixed() ),
+            'fixed-no-loops':   ( lambda: PolskaTopoNoLoops() ) } 
 
 def run():
     setLogLevel('info')	
     
     topo = None
 
-    if args.topo == 'fixed':
+    if args.topo == 'fixed-no-loops':
+        topo = PolskaTopoNoLoops()    
+    elif args.topo == 'fixed':
         topo = PolskaTopoFixed()
     elif args.topo == 'from-gml':
         topo = MyTopoFromGML()

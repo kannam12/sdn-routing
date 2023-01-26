@@ -17,7 +17,7 @@ class MyTopoFromGML( Topo ):
     def build( self ):
         "Load topo form .gml file."
 
-        GRAPH = nx.read_gml('topo-polska.gml')  #works also for other .gml files, eg. janos
+        GRAPH = nx.read_gml('topos/topo-polska.gml')  #works also for other .gml files, eg. janos
 
         node_names = list(GRAPH.nodes)  #helper for list()
         numbers = [i+1 for i in range (len(node_names))]  #helper for dictionary creating
@@ -51,6 +51,9 @@ class PolskaTopoFixed( Topo ):
                     'Warszawa',
                     'Lodz'] 
 
+        
+        cities.sort()
+        print(cities)
         node_count = len(cities)
 
         sw = [ f's{i+1}' for i in range (node_count)]     #s1, s2....

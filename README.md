@@ -2,7 +2,7 @@
 
 ### Uruchamianie przygotowanej topologii Polska w środowisku Mininet:
 
-`sudo python3 polska-z-ruchem.py --topo=fixed` 
+`sudo python3 setup-topo-generate-traffic.py --topo=fixed` 
 
 Powyższy skrypt:
 1. **Zestawia sieć**. W przypadku chęci skorzystania z dowolnej innej topologii zapisanej w formacie .gml należy użyć `--topo=from-gml` oraz zapisać plik .gml w tym samym folderze pod nazwą *custom-topo.gml*. W przypadku chęci skorzystania z topologii proponowanej przez mininet, np. tree należy do standardowej komendy dodać `--controller=remote,ip=127.0.0.1,port=5555`

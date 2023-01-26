@@ -27,7 +27,7 @@ graph [
 
   node [
     id     1
-    label  "Bydgo..."
+    label  "Bydgoszcz"
 
     graphics [
       x        215.55
@@ -46,7 +46,7 @@ graph [
 
   node [
     id     2
-    label  "Kolob..."
+    label  "Kolobrzeg"
 
     graphics [
       x        101.43
@@ -103,7 +103,7 @@ graph [
 
   node [
     id     5
-    label  "Bialy..."
+    label  "Bialystok"
 
     graphics [
       x        545.21
@@ -198,7 +198,7 @@ graph [
 
   node [
     id     10
-    label  "Warsaw"
+    label  "Warszawa"
 
     graphics [
       x        412.07
