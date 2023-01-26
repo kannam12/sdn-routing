@@ -56,7 +56,20 @@ class PolskaTopoNoLoops( Topo ):
 
         sw = [ f's{i+1}' for i in range (node_count)]     #s1, s2....
 
-        Hosts = [ self.addHost(str(city)) for city in cities ]       
+        macs = {}
+        i = 1
+        for city in cities:
+            mac_end = str(i) if i >=10 else '0'+str(i)
+            macs[city] = "00:00:00:00:00:" + mac_end
+            i += 1
+
+        ips = {}
+        i = 1
+        for city in cities:
+            ips[city] = "10.0.0." + str(i)
+            i += 1
+
+        Hosts = [ self.addHost(str(city), mac=macs[city], ip=ips[city]) for city in cities ]    
         Switches = [ self.addSwitch(str(s)) for s in sw ] 
 
         # Add links
