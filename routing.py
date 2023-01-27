@@ -111,12 +111,13 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
 
             flood_or_port = ofproto.OFPP_FLOOD # <- o z tym pewnie trzeba cos zrobic
+            # a jakby sprobowac arpa puscic raz tym naszym routingiem? i wtedy olac flow na flood?
 
             match = parser.OFPMatch(eth_type=0x0806)
             actions = [parser.OFPActionOutput(flood_or_port)]
             self.add_flow(dp, 2, match, actions, hard_timeout=0)
 
-            match = parser.OFPMatch(ipv4_dst=ip_dst, eth_type=0x0806)
+            match = parser.OFPMatch(arp_tpa=ip_dst, eth_type=0x0806)
             actions = [parser.OFPActionOutput(port=1)]
             self.add_flow(dp, 2, match, actions, hard_timeout=0)
 
@@ -212,7 +213,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 actions = [parser.OFPActionOutput(port=out_port)]
                 self.add_flow(dp_value, 10, match, actions)
 
-                match = parser.OFPMatch(ipv4_dst=ip_dst, eth_type=0x806)
+                match = parser.OFPMatch(arp_tpa=ip_dst, eth_type=0x806) # mozna jeszcze pokminic z arp_op ktore mowi czy arp request czy replay
                 actions = [parser.OFPActionOutput(port=out_port)]
                 self.add_flow(dp_value, 2, match, actions)
 
