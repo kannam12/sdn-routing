@@ -21,6 +21,21 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
     POLLING_INTERVAL = 20
     MAX_THR = 1e9/8
 
+    cities = {1:'Szczecin',
+    2:'Kolobrzeg',
+    3:'Gdansk',
+    4:'Bialystok',
+    5:'Rzeszow',
+    6:'Krakow',
+    7:'Katowice',
+    8:'Wroclaw',
+    9:'Poznan',
+    10:'Bydgoszcz',
+    11:'Warszawa',
+    12:'Lodz'}
+
+    prev_counters=[{}]+[{} for city in cities]
+
     def __init__(self, *args, **kwargs):
         super(CustomSwitch, self).__init__(*args, **kwargs)
         self.datapaths = {}
@@ -142,8 +157,8 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
 
-        # req = parser.OFPFlowStatsRequest(datapath)
-        # datapath.send_msg(req)
+        req = parser.OFPFlowStatsRequest(datapath)
+        datapath.send_msg(req)
 
         req = parser.OFPPortStatsRequest(datapath, 0, ofproto.OFPP_ANY)
         datapath.send_msg(req)
@@ -153,7 +168,27 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
 
         body = ev.msg.body
 
-        print(f'Wypisywanie statystyk dla FLOW (...)')
+        print(f'Wypisywanie statystyk dla {ev.msg.datapath.id}:{self.cities[ev.msg.datapath.id]}')
+        self.logger.info('datapath         '
+                         'eth_type  ipv4_dst         '
+                         'out-port packets  bytes  speed')
+        # for stat in [flow for flow in body if flow.priority == 10]:
+        #     print(stat)
+        self.logger.info('---------------- '
+                         '-------- ----------------- '
+                         '-------- -------- -------- --------')
+        for stat in sorted([flow for flow in body if flow.priority == 10],
+                           key=lambda flow: (flow.match['eth_type'],
+                                             flow.match['ipv4_dst'])):
+            if stat not in self.prev_counters[ev.msg.datapath.id].keys():
+                self.prev_counters[ev.msg.datapath.id][stat]=0
+            self.logger.info('%016x %8x %17s %8x %8d %8d %8d',
+                             ev.msg.datapath.id,
+                             stat.match['eth_type'], stat.match['ipv4_dst'],
+                             stat.instructions[0].actions[0].port,
+                             stat.packet_count, stat.byte_count,
+                             (stat.byte_count-self.prev_counters[ev.msg.datapath.id][stat])/self.POLLING_INTERVAL*1000)
+            self.prev_counters[ev.msg.datapath.id][stat]=stat.byte_count
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
