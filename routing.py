@@ -180,15 +180,15 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         for stat in sorted([flow for flow in body if flow.priority == 10],
                            key=lambda flow: (flow.match['eth_type'],
                                              flow.match['ipv4_dst'])):
-            if stat not in self.prev_counters[ev.msg.datapath.id].keys():
-                self.prev_counters[ev.msg.datapath.id][stat]=0
+            if stat.match['ipv4_dst'] not in self.prev_counters[ev.msg.datapath.id].keys():
+                self.prev_counters[ev.msg.datapath.id][stat.match['ipv4_dst']]=0
             self.logger.info('%016x %8x %17s %8x %8d %8d %8d',
                              ev.msg.datapath.id,
                              stat.match['eth_type'], stat.match['ipv4_dst'],
                              stat.instructions[0].actions[0].port,
                              stat.packet_count, stat.byte_count,
-                             (stat.byte_count-self.prev_counters[ev.msg.datapath.id][stat])/self.POLLING_INTERVAL*1000)
-            self.prev_counters[ev.msg.datapath.id][stat]=stat.byte_count
+                             (stat.byte_count-self.prev_counters[ev.msg.datapath.id][stat.match['ipv4_dst']])/(self.POLLING_INTERVAL))
+            self.prev_counters[ev.msg.datapath.id][stat.match['ipv4_dst']]=stat.byte_count
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):

@@ -7,6 +7,7 @@ from mininet.log import setLogLevel, info
 from mininet.cli import CLI
 import argparse
 from random import sample
+from mininet.link import TCLink
 
 from mininet.node import RemoteController
 
@@ -133,19 +134,19 @@ class PolskaTopoFixed( Topo ):
 
         # Add links
         for i in range (node_count):
-            self.addLink( Hosts[i] , Switches[i] )
+            self.addLink( Hosts[i] , Switches[i], cls=TCLink, bw=1)
 
         for i in range (node_count-1):
-            self.addLink( Switches[i], Switches[i+1] )
+            self.addLink( Switches[i], Switches[i+1], cls=TCLink, bw=1)
             
-        self.addLink( Switches[0], Switches[8] )
-        self.addLink( Switches[1], Switches[9] )
-        self.addLink( Switches[2], Switches[10] )
-        self.addLink( Switches[3], Switches[10] )
-        self.addLink( Switches[5], Switches[10] )
-        self.addLink( Switches[6], Switches[11] )
-        self.addLink( Switches[7], Switches[11] )
-        self.addLink( Switches[10], Switches[11] )
+        self.addLink( Switches[0], Switches[8], cls=TCLink, bw=1)
+        self.addLink( Switches[1], Switches[9], cls=TCLink, bw=1)
+        self.addLink( Switches[2], Switches[10], cls=TCLink, bw=1)
+        self.addLink( Switches[3], Switches[10], cls=TCLink, bw=1)
+        self.addLink( Switches[5], Switches[10], cls=TCLink, bw=1)
+        self.addLink( Switches[6], Switches[11], cls=TCLink, bw=1)
+        self.addLink( Switches[7], Switches[11], cls=TCLink, bw=1)
+        self.addLink( Switches[10], Switches[11], cls=TCLink, bw=1)
 
 topos = {   'from-gml':         ( lambda: MyTopoFromGML() ),
             'fixed':            ( lambda: PolskaTopoFixed() ),
