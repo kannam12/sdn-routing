@@ -14,7 +14,7 @@ Powyższy skrypt:
 2. Na każdym z hostów **uruchamia serwer Iperf oraz inicjuje testowe przepływy**. Wyniki dla poszczególnych hostów zapisywane są w *results/results_<host_IP>.txt*
 
 
-### Uruchamianie sterownika i zaimplementowanej funckjonalności:
+### Uruchamianie sterownika i zaimplementowanej funkcjonalności:
 
 `ryu-manager --ofp-tcp-listen-port 5555 --verbose --observe-links routing.py` 
 
