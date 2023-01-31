@@ -175,14 +175,12 @@ def run():
 
     # for switch in net.switches:
     #     switch.start([controller])
-    # i = 0
     for h in net.hosts:
         ips = ''
         for h_temp in net.hosts:
-             if h != h_temp:
+             if h != h_temp and h_temp.IP() != '10.0.0.6' and h_temp.IP() != '10.0.0.3':
                 ips += h_temp.IP() + ' '
-        # h.cmdPrint( f'./generate_traffic.sh "{ips}" "{h.IP()}" &')
-        # i += 1
+        h.cmdPrint( f'./generate_traffic.sh "{ips}" "{h.IP()}" &')
 
     CLI(net)
     net.stop()
