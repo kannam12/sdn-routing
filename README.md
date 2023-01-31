@@ -16,7 +16,7 @@ Powyższy skrypt:
 
 ### Uruchamianie sterownika i zaimplementowanej funckjonalności:
 
-`ryu-manager --ofp-tcp-listen-port 5555 --verbose routing.py --observe-links` 
+`ryu-manager --ofp-tcp-listen-port 5555 --verbose --observe-links routing.py` 
 
 * `--observe-links` jest potrzebne do automatycznego wykrywania topologii
 * można pominąć opcję `--verbose`
@@ -47,7 +47,7 @@ Powyższy skrypt:
 | int  | POLLING_INTERVAL  | 5 | [s] - co ile zbieramy statystyki z portów |
 | int | MAX_THR | 1e9 /8 | [B/s] - przepustowość łączy (raczej u nas przypuszczamy, że wszystkie łącza taką samą mają, ale jeśli nie to można dorzucić do struktury grafu jak bytesTx i wagi) |
 | graph (networkx object) | topo | - | przechowuje aktualną topologię w postaci grafu |
-| dict (string, string) : int | interfaces | - | np. interfaces[(Bydgoszcz, Warszawa)]: 2 -> oznacza, że Warszawa jest sąsiadem Bydgoszczy na jej porcie nr 2 |
+| dict (string, int) : string | interfaces | - | np. interfaces[(Bydgoszcz, 2)]: Warszawa -> oznacza, że Warszawa jest sąsiadem Bydgoszczy na jej porcie nr 2 |
 | dict (string, string) : int | routing | - | np. routing[(Bydgoszcz, Olszytn)]: 2 -> oznacza, że ze switcha Bydgoszcz jeśli chcemy coś przesłać do Olsztyna to przez port nr 2 (czyli przez Warszawę) |
 
 
@@ -56,6 +56,7 @@ Powyższy skrypt:
 | ------------- | ------------- | ------------- | ------------- |
 | long | topo.edges[‘bytesTx’] | 0 - ... | [B] - dane przesłane przez dany port |
 | int | topo.edges[‘wagi’] | 0 - 10 000 | wyliczona na podstawie modelu waga na łączu |
+| int | topo.edges[‘port’] | 1 - ... | numer portu na switchu |
 
 
 ## Inne przydatne komendy
