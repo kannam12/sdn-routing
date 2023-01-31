@@ -45,6 +45,7 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
         self.topology_api_app = self
         self.routing = {}
         self.mac_to_port = {}
+        self.path_krakow_gdansk = ""
 
 
     # nasz "MAIN"
@@ -61,6 +62,21 @@ class CustomSwitch(simple_switch_13.SimpleSwitch13):
                 self._request_stats(dp)
                 
             self.routing = self.dijkstra()
+            print()
+            print(f'New routing: {self.routing}')
+            print()
+            try:
+                self.path_krakow_gdansk = "6_Krakow"
+                i = 6
+                while i != 3:
+                    next_interface = self.routing[i, 3]
+                    next_switch = self.interfaces[i, next_interface]
+                    self.path_krakow_gdansk += f" - {next_switch}_{self.cities[next_switch]}"
+                    i = next_switch
+                print(f'New routing for 6_Krakow 3_Gdansk: {self.path_krakow_gdansk}')
+                print()
+            except:
+                print(f'No routing for 6_Krakow 3_Gdansk')
 
             for dp_key in self.datapaths:
                 dp_value = self.datapaths[dp_key]
